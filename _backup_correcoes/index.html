@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objetivo Adventure &ndash; A Jornada do Conhecimento</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="game-container">
+        
+        <!-- HUD Superior (Fixo no topo) -->
+        <div id="hud" class="hidden">
+            <div class="hud-left">
+                <!-- C&iacute;rculo de perfil do Mascote e Vidas -->
+                <div class="hud-mascot-circle">
+                    <img src="mascote.png" alt="Mascote">
+                </div>
+                <div class="hud-lives-label">x <span id="hud-lives">3</span></div>
+                
+                <!-- Livros Coletados -->
+                <div class="hud-item-counter">
+                    <span class="hud-item-icon">&#128216;</span>
+                    <span id="hud-books" class="hud-item-val">0</span>
+                </div>
+                
+                <!-- Estrelas Coletadas -->
+                <div class="hud-item-counter">
+                    <span class="hud-item-icon">&#11088;</span>
+                    <span id="hud-stars" class="hud-item-val">0</span>
+                </div>
+            </div>
+
+            <!-- Nome da Fase Centralizado -->
+            <div class="hud-center">
+                <div class="level-capsule" id="hud-level">FASE 1: FLORESTA DO CONHECIMENTO</div>
+            </div>
+
+            <!-- Pontua&ccedil;&atilde;o e Bot&atilde;o de Reiniciar -->
+            <div class="hud-right">
+                <div class="hud-score-label">PONTOS <span id="hud-score">000000</span></div>
+                <button id="hud-restart" class="btn-restart-capsule">
+                    <span class="key-r-badge">R</span> REINICIAR
+                </button>
+            </div>
+        </div>
+
+        <!-- Canvas do Jogo (Tela Cheia) -->
+        <canvas id="game-canvas"></canvas>
+
+        <!-- Caixa de Di&aacute;logo Inicial no Canvas (Estilo Pop-up Azul com borda Amarela) -->
+        <div id="intro-dialog" class="intro-dialog-container hidden">
+            <div class="intro-dialog-box">
+                <div class="intro-mascot-pic">
+                    <img src="mascote.png" alt="Mascote">
+                </div>
+                <div class="intro-dialog-content">
+                    <h2>OBJETIVO ADVENTURE</h2>
+                    <h3 class="highlight">A Jornada do Conhecimento</h3>
+                    <p>Colete livros, estrelas e encontre os cristais para completar cada fase!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1. Tela Inicial / Menu (Full Screen overlay) -->
+        <div id="start-screen" class="screen">
+            <div class="menu-layout">
+                <div class="menu-info">
+                    <h1 class="game-title">
+                        Objetivo Adventure
+                        <span class="highlight">A Jornada do Conhecimento</span>
+                    </h1>
+                    <p class="game-subtitle">
+                        Ajude o nosso mascote a recuperar os Cristais do Conhecimento perdidos pela escola!
+                    </p>
+                    <div class="button-group">
+                        <button id="btn-start" class="btn btn-primary">Jogar</button>
+                        <button id="btn-how-to" class="btn btn-secondary">Como Jogar</button>
+                        <button id="btn-creators" class="btn btn-secondary">Criadores</button>
+                    </div>
+                </div>
+                <div class="menu-art">
+                    <img src="logo_mascote.jpg" alt="ÃƒÂndio Mogi" class="school-logo">
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Tela da Hist&oacute;ria -->
+        <div id="story-screen" class="screen hidden">
+            <div class="glass-panel">
+                <img src="mascote.png" alt="Mascote" class="story-mascote-mini">
+                <h2>A Miss&atilde;o do Conhecimento</h2>
+                <p>
+                    Os poderosos <strong>Cristais do Conhecimento</strong>, que guardavam a sabedoria e o aprendizado de nossa escola, foram espalhados por diferentes &aacute;reas do col&eacute;gio!
+                </p>
+                <p>
+                    Nosso querido mascote precisa passar pela <strong>Floresta do Conhecimento</strong>, desvendar o perigoso <strong>Caminho da Matem&aacute;tica</strong> e alcan&ccedil;ar a <strong>Escola Objetivo</strong> para recuperar todos os cristais!
+                </p>
+                <p>
+                    Colete livros e estrelas pelo caminho, enfrente os chefes e resgate os cristais para salvar o aprendizado!
+                </p>
+                <button id="btn-story-next" class="btn btn-primary" style="margin-top: 10px;">Iniciar Jornada</button>
+            </div>
+        </div>
+
+        <!-- 3. Tela de Game Over -->
+        <div id="gameover-screen" class="screen hidden">
+            <h2 class="end-title">Game Over</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 20px;">Tente novamente para vencer o desafio!</p>
+            <div class="end-stats">
+                <p>Pontua&ccedil;&atilde;o alcan&ccedil;ada: <span id="gameover-score" class="val">0</span></p>
+            </div>
+            <button id="btn-restart-gameover" class="btn btn-primary">Tentar Novamente</button>
+        </div>
+
+        <!-- 5. Tela de Vida Perdida (overlay tempor&aacute;rio, aparece durante o gameplay) -->
+        <div id="life-lost-screen" class="life-lost-overlay hidden">
+            <div class="life-lost-panel">
+                <img src="mascote.png" alt="Mascote" class="life-lost-mascot">
+                <h2 class="life-lost-title">Voc&ecirc; perdeu uma vida!</h2>
+                <p class="life-lost-sub">Ainda restam:</p>
+                <div class="life-lost-hearts" id="life-lost-hearts"></div>
+                <div class="life-lost-progress-bar">
+                    <div class="life-lost-progress-fill" id="life-lost-progress-fill"></div>
+                </div>
+                <p class="life-lost-hint">Toque ou pressione qualquer tecla para continuar</p>
+            </div>
+        </div>
+
+        <!-- 4. Tela de Vit&oacute;ria -->
+        <div id="victory-screen" class="screen hidden">
+            <h2 class="end-title">Parab&eacute;ns!</h2>
+            <p style="font-size: 1.3rem; margin-bottom: 20px;">Voc&ecirc; completou a Jornada do Conhecimento!</p>
+            <div class="end-stats">
+                <p>Pontua&ccedil;&atilde;o Final: <span id="victory-score" class="val">0</span></p>
+            </div>
+            <button id="btn-restart-victory" class="btn btn-primary">Jogar Novamente</button>
+        </div>
+
+        <!-- Modal "Como Jogar" -->
+        <div id="how-to-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Como Jogar</h3>
+                    <button id="btn-modal-close" class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Controles:</strong></p>
+                    <div class="controls-grid">
+                        <div class="control-item">
+                            <span class="key-cap">&#9664;</span>
+                            <span class="key-cap">&#9654;</span>
+                            <span>ou</span>
+                            <span class="key-cap">A</span>
+                            <span class="key-cap">D</span>
+                            <span>Mover para os lados</span>
+                        </div>
+                        <div class="control-item">
+                            <span class="key-cap">&#9650;</span>
+                            <span>ou</span>
+                            <span class="key-cap">Espa&ccedil;o</span>
+                            <span>Pular</span>
+                        </div>
+                    </div>
+                    
+                    <p><strong>Itens e Pontua&ccedil;&atilde;o:</strong></p>
+                    <div class="items-legend">
+                        <div class="legend-item">
+                            <span class="legend-icon">&#128216;</span>
+                            <strong>Livro</strong>
+                            <span>+10 Pontos</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-icon">&#11088;</span>
+                            <strong>Estrela</strong>
+                            <span>+50 Pontos</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-icon">&#128142;</span>
+                            <strong>Cristal</strong>
+                            <span>Passa de Fase</span>
+                        </div>
+                    </div>
+
+                    <p><strong>Regras Importantes:</strong></p>
+                    <ul>
+                        <li>Voc&ecirc; come&ccedil;a com <strong>3 vidas</strong> &#10084;&#65039;.</li>
+                        <li>Encostar nos inimigos pela lateral faz voc&ecirc; perder 1 vida.</li>
+                        <li>Pule em cima dos inimigos para derrot&aacute;-los; nos chefes, acerte 3 pulos na cabe&ccedil;a.</li>
+                        <li>Cair fora da tela (abismo) tira 1 vida e faz voc&ecirc; voltar ao in&iacute;cio da fase.</li>
+                    </ul>
+                </div>
+                <button id="btn-modal-ok" class="btn btn-primary" style="align-self: center; padding: 10px 30px;">Entendido!</button>
+            </div>
+        </div>
+        <!-- Modal "Criadores" -->
+        <div id="creators-modal" class="modal-overlay hidden">
+            <div class="modal-content creators-modal-content">
+                <div class="modal-header">
+                    <h3>Criadores</h3>
+                    <button id="btn-creators-close" class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body creators-body">
+                    <p class="credits-note">
+                        Este jogo foi criado para a <strong>FESC 2026</strong>. N&atilde;o temos direito autoral sobre o personagem principal.
+                    </p>
+                    <div class="creators-list">
+                        <p>Fernanda Barros Ferreira</p>
+                        <p>Heitor Choqueta Souza Silva</p>
+                        <p>Helena Carvalho Gardinali</p>
+                        <p>Henrique Cardoso In&aacute;cio</p>
+                        <p>Luiza Messias Couto</p>
+                        <p>Maria Eduarda de Oliveira</p>
+                    </div>
+                </div>
+                <button id="btn-creators-ok" class="btn btn-primary" style="align-self: center; padding: 10px 30px;">Fechar</button>
+            </div>
+        </div>
+        <!-- &Aacute;rea Inferior / Barra de Controles e Dicas (Fixa no rodap&eacute;) -->
+        <div id="bottom-bar" class="hidden">
+            <div class="bottom-left">
+                <span class="controls-title">CONTROLES</span>
+                <div class="controls-layout">
+                    <!-- Movimenta&ccedil;&atilde;o -->
+                    <div class="control-block">
+                        <div class="key-row">
+                            <span class="key-cap-game">&#9664;</span>
+                            <span class="key-cap-game">&#9654;</span>
+                            <span class="key-cap-game">A</span>
+                            <span class="key-cap-game">D</span>
+                        </div>
+                        <span class="control-desc">ANDAR</span>
+                    </div>
+                    <!-- Pular -->
+                    <div class="control-block">
+                        <div class="key-row">
+                            <span class="key-cap-game">&#9650;</span>
+                        </div>
+                        <span class="control-desc">PULAR</span>
+                    </div>
+                    <!-- Abaixar -->
+                    <div class="control-block">
+                        <div class="key-row">
+                            <span class="key-cap-game">&#9660;</span>
+                            <span class="key-cap-game">S</span>
+                        </div>
+                        <span class="control-desc">ABAIXAR</span>
+                    </div>
+                    <!-- Espa&ccedil;o -->
+                    <div class="control-block">
+                        <div class="key-row">
+                            <span class="key-cap-game spacebar-game">&mdash;</span>
+                        </div>
+                        <span class="control-desc">ESPA&Ccedil;O</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bal&atilde;o de Dica com Mascote -->
+            <div class="bottom-right">
+                <div class="tip-mascot-pic">
+                    <img src="mascote.png" alt="Mascote">
+                </div>
+                <div class="tip-bubble-box">
+                    DICA: Antes do CRISTAL, ven&ccedil;a o chefe com 3 pulos na cabe&ccedil;a!
+                </div>
+            </div>
+        </div>
+
+        <!-- Controles por toque (aparecem em telas pequenas) -->
+        <div id="touch-controls" class="touch-controls hidden" aria-label="Controles de toque">
+            <div class="touch-dpad">
+                <button id="touch-left" class="touch-btn" type="button" aria-label="Mover para a esquerda">&lsaquo;</button>
+                <button id="touch-down" class="touch-btn touch-down" type="button" aria-label="Abaixar">&#9660;</button>
+                <button id="touch-right" class="touch-btn" type="button" aria-label="Mover para a direita">&rsaquo;</button>
+            </div>
+            <button id="touch-jump" class="touch-btn touch-jump" type="button" aria-label="Pular">&#9650;</button>
+        </div>
+
+    </div>
+
+    <!-- Script do Jogo -->
+    <script src="game.js"></script>
+</body>
+</html>
+
+

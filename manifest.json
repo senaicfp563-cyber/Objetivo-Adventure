@@ -1,0 +1,9 @@
+{
+  "name": "Objetivo Adventure",
+  "short_name": "ObjAdventure",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#0b1e36",
+  "theme_color": "#0b1e36"
+}
