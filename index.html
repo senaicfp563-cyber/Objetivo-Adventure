@@ -6,7 +6,11 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0b1e36">
+    <meta name="description" content="Objetivo Adventure - jogo educativo de plataforma em formato PWA, otimizado para celulares.">
+    <meta name="apple-mobile-web-app-title" content="Objetivo Adventure">
     <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
     <title>Objetivo Adventure &ndash; A Jornada do Conhecimento</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -308,7 +312,7 @@
 
     </div>
     <!-- Script do Jogo -->
-    <script src="game.js?v=20260713-mobile-controls-intro"></script>
+    <script src="game.js?v=20260714-mobile-pwa"></script>
 
     <!-- Tela de aviso para girar o dispositivo -->
     <div id="rotate-device-screen" class="rotate-device-screen hidden">
@@ -324,6 +328,16 @@
         </div>
     </div>
 
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js').catch((error) => {
+                    console.warn('Falha ao registrar service worker:', error);
+                });
+            });
+        }
+    </script>
 </body>
 </html>
 
