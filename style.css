@@ -1551,3 +1551,127 @@ p.game-subtitle {
         font-size: 0.8rem !important;
     }
 }
+
+
+/* ===== Ajustes Mobile/PWA ===== */
+:root {
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+}
+
+html, body {
+    min-height: 100dvh;
+    overscroll-behavior: none;
+    background-color: #0b1e36;
+}
+
+#game-container {
+    min-height: 100dvh;
+}
+
+.btn,
+.btn-restart-capsule,
+.touch-btn,
+.btn-fullscreen-toggle {
+    touch-action: manipulation;
+}
+
+.mobile-controls {
+    padding-bottom: calc(12px + var(--safe-bottom));
+    padding-left: calc(12px + var(--safe-left));
+    padding-right: calc(12px + var(--safe-right));
+}
+
+.mobile-game-screen #hud {
+    padding-top: var(--safe-top);
+    padding-left: calc(12px + var(--safe-left));
+    padding-right: calc(12px + var(--safe-right));
+}
+
+.mobile-game-screen #bottom-bar {
+    padding-left: calc(12px + var(--safe-left));
+    padding-right: calc(12px + var(--safe-right));
+    padding-bottom: calc(8px + var(--safe-bottom));
+}
+
+.mobile-game-screen .btn-fullscreen-toggle {
+    top: calc(88px + var(--safe-top));
+    left: calc(12px + var(--safe-left));
+}
+
+@media (pointer: coarse), (max-width: 900px) {
+    #bottom-bar .bottom-left {
+        display: none;
+    }
+
+    #bottom-bar {
+        justify-content: flex-end;
+        height: 76px;
+    }
+
+    #bottom-bar .bottom-right {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .tip-bubble-box {
+        max-width: min(62vw, 420px);
+        font-size: 0.78rem;
+        line-height: 1.25;
+        padding: 10px 12px;
+    }
+
+    .tip-mascot-pic {
+        width: 46px;
+        height: 46px;
+    }
+
+    #hud {
+        height: 76px;
+    }
+
+    .hud-left {
+        gap: 10px;
+    }
+
+    .hud-right {
+        gap: 12px;
+    }
+
+    .hud-score-label span {
+        font-size: 1.45rem;
+    }
+
+    .btn-restart-capsule {
+        padding: 8px 12px;
+        font-size: 0.82rem;
+    }
+
+    .touch-btn {
+        min-width: 58px;
+        min-height: 58px;
+    }
+}
+
+@media (max-height: 430px) and (orientation: landscape) {
+    #bottom-bar {
+        height: 68px;
+    }
+
+    .tip-bubble-box {
+        font-size: 0.7rem;
+        padding: 8px 10px;
+    }
+
+    .tip-mascot-pic {
+        width: 40px;
+        height: 40px;
+    }
+
+    .touch-btn {
+        min-width: 52px;
+        min-height: 52px;
+    }
+}
